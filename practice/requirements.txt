@@ -1,0 +1,21 @@
+# Pinterest ML Interview Prep - Requirements
+# Install with: pip install -r requirements.txt
+
+# Core scientific computing
+numpy>=1.21.0
+
+# Testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Optional: For comparing with sklearn implementations
+scikit-learn>=1.0.0
+
+# Optional: For visualization (helpful for understanding)
+matplotlib>=3.5.0
+
+# Optional: For data manipulation practice
+pandas>=1.4.0
+
+# Type hints
+typing-extensions>=4.0.0
