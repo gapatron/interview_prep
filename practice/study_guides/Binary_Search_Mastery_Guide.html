@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Binary Search Mastery Guide</title>
+    <style>
+        body { 
+            font-family: 'DejaVu Sans', Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            line-height: 1.6; 
+        }
+        code { 
+            background-color: #f4f4f4; 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-family: 'Courier New', monospace; 
+        }
+        pre { 
+            background-color: #f4f4f4; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto; 
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0; 
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #4CAF50; 
+            color: white; 
+        }
+        h1, h2, h3 { 
+            color: #333; 
+            page-break-after: avoid; 
+        }
+        h1 { border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+        h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+<h1>🔍 Binary Search - Complete Mastery Guide</h1>
+<h2>Interactive Workbook for Offline Study</h2>
+<p><strong>Author:</strong> Interview Prep Materials<br />
+<strong>Last Updated:</strong> 2025<br />
+<strong>Estimated Study Time:</strong> 6-8 hours</p>
+<p><strong>This comprehensive guide covers:</strong>
+- Binary Search fundamentals &amp; intuition
+- All Binary Search templates (exact, lower bound, upper bound, answer space)
+- When to use each template
+- Common patterns and pitfalls
+- Advanced binary search techniques</p>
+<hr />
+<h1>Table of Contents</h1>
+<ol>
+<li><a href="#binary-search-core-concepts">Binary Search Core Concepts</a></li>
+<li><a href="#template-1-classic-binary-search">Template 1: Classic Binary Search (Exact Value)</a></li>
+<li><a href="#template-2-lower-bound">Template 2: Lower Bound (First Position)</a></li>
+<li><a href="#template-3-upper-bound">Template 3: Upper Bound (Last Position)</a></li>
+<li><a href="#template-4-binary-search-on-answer">Template 4: Binary Search on Answer Space</a></li>
+<li><a href="#template-5-binary-search-on-condition">Template 5: Binary Search on Condition</a></li>
+<li><a href="#part-7-template-summary--decision-guide">Template Summary &amp; Decision Guide</a></li>
+<li><a href="#practice-problems">Practice Problems</a></li>
+<li><a href="#additional-practice-problems-minimize-maximum--maximize-minimum">Additional Practice Problems (Minimize Maximum / Maximize Minimum)</a></li>
+<li><a href="#answer-key">Answer Key</a></li>
+</ol>
+<hr />
+<h1>Part 1: Binary Search Core Concepts</h1>
+<h2>🎯 Understanding Binary Search: The Guessing Game Analogy</h2>
+<p><strong>Fill in the blanks:</strong></p>
+<ol>
+<li>Binary search works like guessing a number between 1 and 100:</li>
+<li><strong>Linear search:</strong> "Is it 1? No. Is it 2? No..." (100 guesses!)</li>
+<li>
+<p><strong>Binary search:</strong> "Is it 50? Too high. Is it 25? Too low..." (<strong>______</strong> guesses!)</p>
+</li>
+<li>
+<p>Binary search requires the array to be <strong>______</strong> (ascending or descending).</p>
+</li>
+<li>
+<p>Binary search reduces time complexity from <strong>______</strong> to <strong>______</strong>.</p>
+</li>
+<li>
+<p>At each step, binary search eliminates <strong>______</strong> of the remaining elements.</p>
+</li>
+<li>
+<p>Binary search uses the <strong>______</strong> property to eliminate half the space.</p>
+</li>
+</ol>
+<h2>🔑 Key Insight</h2>
+<p><strong>Binary Search = Halve the search space at each step until you find what you're looking for.</strong></p>
+<p>Instead of checking every element (O(n)), binary search achieves O(log n)!</p>
+<h2>📋 Prerequisites for Binary Search</h2>
+<p><strong>Fill in the table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sorted array</strong></td>
+<td>Need to know if elements are before/after</td>
+</tr>
+<tr>
+<td><strong>Monotonic property</strong></td>
+<td>Condition that allows halving</td>
+</tr>
+<tr>
+<td><strong>Search space</strong></td>
+<td>Can be divided in half</td>
+</tr>
+<tr>
+<td><strong>Comparable elements</strong></td>
+<td>Need to compare with target</td>
+</tr>
+</tbody>
+</table>
+<h2>💡 Why Binary Search Works</h2>
+<p><strong>Complete the explanation:</strong></p>
+<p>Binary search works because:
+1. If <code>array[mid] &lt; target</code>, then <strong>all elements to the left</strong> are also <strong>______</strong> than target (because array is sorted!)
+2. This allows us to <strong>______</strong> the entire left half
+3. We only need to search the <strong>______</strong> half
+4. Each step reduces search space by <strong>______</strong></p>
+<hr />
+<h1>Part 2: Template 1: Classic Binary Search (Exact Value)</h1>
+<h2>🎯 When to Use This Template</h2>
+<p><strong>Use Template 1 when:</strong>
+- ✅ You need to find the <strong>exact value</strong> in a sorted array
+- ✅ You want to know if a value <strong>exists</strong>
+- ✅ You need the <strong>index</strong> of a specific element</p>
+<p><strong>Example problems:</strong>
+- Binary Search (LeetCode #704)
+- Search in Rotated Sorted Array
+- Search a 2D Matrix</p>
+<h2>📝 The Algorithm</h2>
+<p><strong>Complete the steps:</strong></p>
+<ol>
+<li><strong>Initialize:</strong></li>
+<li><code>left = 0</code>, <code>right = len(array) - 1</code></li>
+<li>
+<p>Loop condition: <strong>______</strong> (fill in: &lt;= or &lt;)</p>
+</li>
+<li>
+<p><strong>Main Loop:</strong></p>
+</li>
+<li>Calculate <code>mid = left + (right - left) // 2</code> (prevents <strong>______</strong>)</li>
+<li>If <code>array[mid] == target</code>: <strong>______</strong></li>
+<li>If <code>array[mid] &lt; target</code>: search <strong>______</strong> (<code>left = mid + 1</code>)</li>
+<li>
+<p>If <code>array[mid] &gt; target</code>: search <strong>______</strong> (<code>right = mid - 1</code>)</p>
+</li>
+<li>
+<p><strong>Exit:</strong></p>
+</li>
+<li>If loop ends, target <strong>______</strong> found → return -1</li>
+</ol>
+<h2>📋 Template 1: Complete the Code</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classic binary search: find exact value in sorted array.</span>
+
+<span class="sd">    Returns index of target, or -1 if not found.</span>
+
+<span class="sd">    TODO: Fill in the missing code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span><span class="p">,</span> <span class="n">________________</span>  <span class="c1"># Fill in: initialize</span>
+
+    <span class="k">while</span> <span class="n">________________</span><span class="p">:</span>  <span class="c1"># Fill in: loop condition</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: calculate mid (prevent overflow!)</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in</span>
+
+        <span class="k">elif</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">________________</span>  <span class="c1"># Fill in: search right</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># nums[mid] &gt; target</span>
+            <span class="n">________________</span>  <span class="c1"># Fill in: search left</span>
+
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: not found</span>
+</code></pre></div>
+
+<h2>🎓 Key Points for Template 1</h2>
+<p><strong>Answer these questions:</strong></p>
+<ol>
+<li><strong>Why use <code>left &lt;= right</code> instead of <code>left &lt; right</code>?</strong></li>
+</ol>
+<p>Your answer:</p>
+<hr />
+<ol>
+<li><strong>Why <code>left = mid + 1</code> instead of <code>left = mid</code>?</strong></li>
+</ol>
+<p>Your answer:</p>
+<hr />
+<ol>
+<li><strong>Why use <code>left + (right - left) // 2</code> instead of <code>(left + right) // 2</code>?</strong></li>
+</ol>
+<p>Your answer:</p>
+<hr />
+<h2>📚 Example 1: Basic Binary Search</h2>
+<p><strong>Problem:</strong> Find target 7 in <code>[1, 3, 5, 7, 9, 11, 13, 15]</code></p>
+<p><strong>Trace through the algorithm:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>left</th>
+<th>right</th>
+<th>mid</th>
+<th>nums[mid]</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>7</td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Final result:</strong> <strong>______</strong></p>
+<h2>📚 Example 2: Target Not Found</h2>
+<p><strong>Problem:</strong> Find target 6 in <code>[1, 3, 5, 7, 9, 11]</code></p>
+<p><strong>What happens?</strong>
+- We search until <code>left &gt; right</code>
+- Return: <strong>______</strong></p>
+<hr />
+<h1>Part 3: Template 2: Lower Bound (First Position)</h1>
+<h2>🎯 When to Use This Template</h2>
+<p><strong>Use Template 2 when:</strong>
+- ✅ Finding <strong>first occurrence</strong> of a value
+- ✅ Finding <strong>insertion position</strong> for a value
+- ✅ Finding first position where <strong>condition is true</strong>
+- ✅ Implementing <strong>lower_bound</strong> (C++)</p>
+<p><strong>Example problems:</strong>
+- Search Insert Position (LeetCode #35)
+- Find First and Last Position (LeetCode #34)
+- First Bad Version (LeetCode #278)</p>
+<h2>🔑 Key Insight</h2>
+<p><strong>Lower Bound = First position where <code>array[pos] &gt;= target</code></strong></p>
+<p>This is useful for:
+- Insertion position: where to insert target to maintain sorted order
+- First occurrence: first position where target appears</p>
+<h2>📝 The Algorithm</h2>
+<p><strong>Complete the steps:</strong></p>
+<ol>
+<li><strong>Initialize:</strong></li>
+<li><code>left = 0</code>, <code>right = len(array) - 1</code></li>
+<li>
+<p>Loop condition: <strong>______</strong> (fill in: &lt;= or &lt;)</p>
+</li>
+<li>
+<p><strong>Main Loop:</strong></p>
+</li>
+<li>Calculate <code>mid</code></li>
+<li>If <code>array[mid] &gt;= target</code>: <strong>keep mid</strong> (could be answer), <code>right = mid</code></li>
+<li>
+<p>Else: <strong>exclude mid</strong>, <code>left = mid + 1</code></p>
+</li>
+<li>
+<p><strong>Exit:</strong></p>
+</li>
+<li><code>left</code> points to <strong>first position</strong> where condition is true</li>
+<li>Check if <code>array[left] == target</code> (if we need exact match)</li>
+</ol>
+<h2>📋 Template 2: Complete the Code</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find first position where nums[pos] &gt;= target (lower bound).</span>
+
+<span class="sd">    This gives insertion position or first occurrence.</span>
+
+<span class="sd">    TODO: Fill in the missing code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">________________</span><span class="p">:</span>  <span class="c1"># Fill in: loop condition (hint: different from Template 1!)</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: keep mid (hint: not mid - 1!)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: exclude mid</span>
+
+    <span class="c1"># Optional: Check if target exists</span>
+    <span class="c1"># return left if nums[left] == target else -1</span>
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: insertion position</span>
+</code></pre></div>
+
+<h2>🎓 Key Differences from Template 1</h2>
+<p><strong>Fill in the comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Template 1 (Exact)</th>
+<th>Template 2 (Lower Bound)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loop condition</td>
+<td><code>left &lt;= right</code></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>When condition true</td>
+<td><code>return mid</code></td>
+<td><strong>______</strong> (keep mid!)</td>
+</tr>
+<tr>
+<td>When condition false</td>
+<td><code>left = mid + 1</code></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>Updates</td>
+<td>Both <code>left</code> and <code>right</code> move</td>
+<td>Only <strong>______</strong> moves or <strong>______</strong> stays</td>
+</tr>
+</tbody>
+</table>
+<h2>📚 Example 1: Find Insertion Position</h2>
+<p><strong>Problem:</strong> Find insertion position for target 5 in <code>[1, 3, 5, 5, 5, 6, 7]</code></p>
+<p><strong>What should it return?</strong>
+- Answer: <strong>______</strong> (first position where <code>&gt;= 5</code>)</p>
+<p><strong>Trace:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>left</th>
+<th>right</th>
+<th>mid</th>
+<th>nums[mid]</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>6</td>
+<td>3</td>
+<td>5</td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>📚 Example 2: First Occurrence</h2>
+<p><strong>Problem:</strong> Find first occurrence of 5 in <code>[1, 3, 5, 5, 5, 6, 7]</code></p>
+<p><strong>After lower_bound returns 2, check:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">left</span>  <span class="c1"># Found at position 2</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Not found</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> <strong>______</strong></p>
+<h2>📚 Example 3: Search Insert Position</h2>
+<p><strong>Problem:</strong> Find insertion position for 2 in <code>[1, 3, 5, 6]</code></p>
+<p><strong>Result:</strong> Position <strong>______</strong> (insert between 1 and 3)</p>
+<hr />
+<h1>Part 4: Template 3: Upper Bound (Last Position)</h1>
+<h2>🎯 When to Use This Template</h2>
+<p><strong>Use Template 3 when:</strong>
+- ✅ Finding <strong>last occurrence</strong> of a value
+- ✅ Finding last position where <strong>condition is true</strong>
+- ✅ Implementing <strong>upper_bound</strong> (C++)</p>
+<p><strong>Example problems:</strong>
+- Find First and Last Position (LeetCode #34) - for last position
+- Last occurrence problems</p>
+<h2>🔑 Key Insight</h2>
+<p><strong>Upper Bound = Last position where <code>array[pos] &lt;= target</code></strong></p>
+<p>Or: <strong>First position where <code>array[pos] &gt; target</code></strong> (minus 1)</p>
+<h2>📝 The Algorithm</h2>
+<p><strong>Complete the steps:</strong></p>
+<ol>
+<li><strong>Initialize:</strong></li>
+<li><code>left = 0</code>, <code>right = len(array) - 1</code></li>
+<li>
+<p>Loop condition: <strong>______</strong> (fill in: &lt;= or &lt;)</p>
+</li>
+<li>
+<p><strong>Main Loop:</strong></p>
+</li>
+<li><strong>IMPORTANT:</strong> Use <code>mid = left + (right - left + 1) // 2</code> (the <strong>+1</strong> is critical!)</li>
+<li>If <code>array[mid] &lt;= target</code>: <strong>keep mid</strong> (could be answer), <code>left = mid</code></li>
+<li>
+<p>Else: <strong>exclude mid</strong>, <code>right = mid - 1</code></p>
+</li>
+<li>
+<p><strong>Exit:</strong></p>
+</li>
+<li><code>left</code> points to <strong>last position</strong> where condition is true</li>
+</ol>
+<h2>📋 Template 3: Complete the Code</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">upper_bound</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find last position where nums[pos] &lt;= target (upper bound).</span>
+
+<span class="sd">    This gives last occurrence or last valid position.</span>
+
+<span class="sd">    TODO: Fill in the missing code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">________________</span><span class="p">:</span>  <span class="c1"># Fill in: loop condition</span>
+        <span class="c1"># CRITICAL: Use +1 in mid calculation to avoid infinite loop!</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># Fill in: why +1?</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: keep mid (hint: not mid + 1!)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: exclude mid</span>
+
+    <span class="c1"># Optional: Check if target exists</span>
+    <span class="c1"># return left if nums[left] == target else -1</span>
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: last position</span>
+</code></pre></div>
+
+<h2>🎓 Critical Understanding: Why +1 in Mid Calculation?</h2>
+<p><strong>Answer this question:</strong></p>
+<p><strong>Why do we use <code>mid = left + (right - left + 1) // 2</code> instead of <code>mid = left + (right - left) // 2</code>?</strong></p>
+<p>Your explanation:</p>
+<hr />
+<hr />
+<hr />
+<p><strong>Key insight:</strong> When <code>left = mid</code> and <code>left = right - 1</code>, we need mid to move <strong>forward</strong>!</p>
+<h2>📚 Example 1: Last Occurrence</h2>
+<p><strong>Problem:</strong> Find last occurrence of 5 in <code>[1, 3, 5, 5, 5, 6, 7]</code></p>
+<p><strong>What should it return?</strong>
+- Answer: <strong>______</strong> (last position where <code>&lt;= 5</code>)</p>
+<p><strong>Trace with +1 mid:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>left</th>
+<th>right</th>
+<th>mid (with +1)</th>
+<th>nums[mid]</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>6</td>
+<td>4</td>
+<td>5</td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What if we didn't use +1?</strong>
+- Mid would be 3, <code>left = mid</code> → <code>left = 3</code>
+- Next iteration: <code>left = 3, right = 6</code>, mid = 4, <code>left = mid</code> → <code>left = 4</code>
+- This works, but when <code>left = 4, right = 5</code>, without +1:
+  - Mid = 4, <code>left = mid</code> → <code>left = 4</code> (no progress! <strong>infinite loop!</strong>)</p>
+<h2>📚 Example 2: Find Range</h2>
+<p><strong>Problem:</strong> Find range of 5 in <code>[1, 3, 5, 5, 5, 6, 7]</code></p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">first</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># Returns 2</span>
+<span class="n">last</span> <span class="o">=</span> <span class="n">upper_bound</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>   <span class="c1"># Returns 4</span>
+<span class="k">return</span> <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">]</span>  <span class="c1"># [2, 4]</span>
+</code></pre></div>
+
+<hr />
+<h1>Part 5: Template 4: Binary Search on Answer Space</h1>
+<h2>🎯 When to Use This Template</h2>
+<p><strong>Use Template 4 when:</strong>
+- ✅ Problem asks for <strong>minimize maximum</strong> or <strong>maximize minimum</strong>
+- ✅ Answer is not in array, but in a <strong>range of possible answers</strong>
+- ✅ You can <strong>verify</strong> if an answer is valid</p>
+<p><strong>Example problems:</strong>
+- Capacity To Ship Packages Within D Days (LeetCode #1011)
+- Split Array Largest Sum (LeetCode #410)
+- Koko Eating Bananas (LeetCode #875)
+- Minimum Time to Complete Trips (LeetCode #2187)</p>
+<h2>🔑 Key Insight</h2>
+<p><strong>Binary Search on Answer = Search in the answer space, not the array!</strong></p>
+<p>Instead of searching the array, we:
+1. Identify the <strong>range of possible answers</strong> <code>[min_answer, max_answer]</code>
+2. Binary search in this range
+3. For each candidate answer, check if it's <strong>valid</strong>
+4. Find the <strong>minimum valid answer</strong> or <strong>maximum valid answer</strong></p>
+<h2>📝 The Algorithm</h2>
+<p><strong>Complete the steps:</strong></p>
+<ol>
+<li><strong>Find Answer Space:</strong></li>
+<li><code>left = min_possible_answer</code></li>
+<li>
+<p><code>right = max_possible_answer</code></p>
+</li>
+<li>
+<p><strong>Main Loop:</strong></p>
+</li>
+<li><code>mid = left + (right - left) // 2</code> (for minimize)</li>
+<li>OR <code>mid = left + (right - left + 1) // 2</code> (for maximize)</li>
+<li>If <code>is_valid(mid)</code>: <ul>
+<li><strong>Minimize:</strong> <code>right = mid</code> (try smaller)</li>
+<li><strong>Maximize:</strong> <code>left = mid</code> (try larger)</li>
+</ul>
+</li>
+<li>
+<p>Else:</p>
+<ul>
+<li><strong>Minimize:</strong> <code>left = mid + 1</code> (too small)</li>
+<li><strong>Maximize:</strong> <code>right = mid - 1</code> (too large)</li>
+</ul>
+</li>
+<li>
+<p><strong>Exit:</strong></p>
+</li>
+<li>Return <code>left</code> (or <code>right</code> depending on problem)</li>
+</ol>
+<h2>📋 Template 4A: Minimize Maximum (Complete the Code)</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">minimize_maximum</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimize the maximum value (e.g., minimize max sum of k subarrays).</span>
+
+<span class="sd">    TODO: Fill in the binary search on answer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define answer space</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: minimum possible answer</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: maximum possible answer</span>
+
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="n">answer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if &#39;answer&#39; is a valid solution.</span>
+
+<span class="sd">        TODO: Implement validation logic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Example: Check if we can split array into k parts</span>
+        <span class="c1"># where each part has sum &lt;= answer</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">current_sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">current_sum</span> <span class="o">+</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">answer</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">current_sum</span> <span class="o">=</span> <span class="n">num</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_sum</span> <span class="o">+=</span> <span class="n">num</span>
+
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">k</span>  <span class="c1"># Can we split into k or fewer parts?</span>
+
+    <span class="c1"># Binary search on answer</span>
+    <span class="k">while</span> <span class="n">________________</span><span class="p">:</span>  <span class="c1"># Fill in: loop condition</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># No +1 for minimize</span>
+
+        <span class="k">if</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: try smaller</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: need larger</span>
+
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: minimum valid answer</span>
+</code></pre></div>
+
+<h2>📋 Template 4B: Maximize Minimum (Complete the Code)</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">maximize_minimum</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maximize the minimum value (e.g., maximize min distance).</span>
+
+<span class="sd">    TODO: Fill in the binary search on answer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define answer space</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: minimum possible answer</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: maximum possible answer</span>
+
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="n">answer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if &#39;answer&#39; is a valid solution.</span>
+
+<span class="sd">        TODO: Implement validation logic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Example: Check if we can place k items with min distance &gt;= answer</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">last_pos</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">last_pos</span> <span class="o">&gt;=</span> <span class="n">answer</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last_pos</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">k</span>  <span class="c1"># Can we place k or more items?</span>
+
+    <span class="c1"># Binary search on answer</span>
+    <span class="k">while</span> <span class="n">________________</span><span class="p">:</span>  <span class="c1"># Fill in: loop condition</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># +1 for maximize!</span>
+
+        <span class="k">if</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: try larger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: too large</span>
+
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: maximum valid answer</span>
+</code></pre></div>
+
+<h2>📚 Example 1: Minimize Maximum (Split Array Largest Sum)</h2>
+<p><strong>Problem:</strong> Split array into k non-empty subarrays, minimize the largest sum.</p>
+<p><strong>Array:</strong> <code>[7, 2, 5, 10, 8]</code>, <code>k = 2</code></p>
+<p><strong>Answer space:</strong>
+- Minimum: <strong>______</strong> (largest single element)
+- Maximum: <strong>______</strong> (sum of all elements)</p>
+<p><strong>Binary search in <code>[10, 32]</code>:</strong>
+- Try 21: Can we split into ≤2 parts each ≤21? <strong>______</strong>
+- Try 18: Can we split? <strong>______</strong>
+- Try 14: Can we split? <strong>______</strong></p>
+<p><strong>Result:</strong> <strong>______</strong></p>
+<h2>📚 Example 2: Maximize Minimum (Aggressive Cows)</h2>
+<p><strong>Problem:</strong> Place k cows in positions, maximize minimum distance between cows.</p>
+<p><strong>Positions:</strong> <code>[1, 2, 4, 8, 9]</code>, <code>k = 3</code></p>
+<p><strong>Answer space:</strong>
+- Minimum: <strong>______</strong> (minimum possible distance)
+- Maximum: <strong>______</strong> (maximum possible distance)</p>
+<p><strong>Binary search to find maximum minimum distance!</strong></p>
+<hr />
+<h1>Part 6: Template 5: Binary Search on Condition</h1>
+<h2>🎯 When to Use This Template</h2>
+<p><strong>Use Template 5 when:</strong>
+- ✅ Finding <strong>boundary</strong> between two conditions
+- ✅ Finding <strong>transition point</strong> (e.g., first bad version)
+- ✅ Finding <strong>peak</strong> or <strong>valley</strong>
+- ✅ Any monotonic condition</p>
+<p><strong>Example problems:</strong>
+- First Bad Version (LeetCode #278)
+- Find Peak Element (LeetCode #162)
+- Search in Rotated Sorted Array (LeetCode #33)
+- H-Index II (LeetCode #275)</p>
+<h2>🔑 Key Insight</h2>
+<p><strong>Binary Search on Condition = Find the boundary where condition changes from false to true (or vice versa)</strong></p>
+<h2>📝 The Algorithm</h2>
+<p><strong>Complete the steps:</strong></p>
+<ol>
+<li><strong>Identify the condition:</strong></li>
+<li>Define <code>condition(mid)</code> that returns True/False</li>
+<li>
+<p>Condition should be <strong>monotonic</strong> (all false then all true, or vice versa)</p>
+</li>
+<li>
+<p><strong>Choose direction:</strong></p>
+</li>
+<li>If finding <strong>first True</strong>: when True, keep mid (<code>right = mid</code>), else exclude (<code>left = mid + 1</code>)</li>
+<li>
+<p>If finding <strong>last False</strong>: when False, keep mid (<code>left = mid</code>), else exclude (<code>right = mid - 1</code>)</p>
+</li>
+<li>
+<p><strong>Adjust mid calculation:</strong></p>
+</li>
+<li>Use <code>+1</code> when <code>left = mid</code> to avoid infinite loop</li>
+</ol>
+<h2>📋 Template 5: Complete the Code</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">first_bad_version</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find first bad version using binary search on condition.</span>
+
+<span class="sd">    Condition: isBadVersion(mid) returns True for bad versions.</span>
+<span class="sd">    Find first position where condition is True.</span>
+
+<span class="sd">    TODO: Fill in the binary search on condition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">isBadVersion</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>  <span class="c1"># Condition is True</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: keep mid (could be first bad)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Condition is False</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in: exclude mid (search right)</span>
+
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: first bad version</span>
+
+<span class="k">def</span> <span class="nf">find_peak_element</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find peak element (nums[i] &gt; nums[i-1] and nums[i] &gt; nums[i+1]).</span>
+
+<span class="sd">    TODO: Complete the peak finding logic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="c1"># Condition: Is mid on an ascending slope?</span>
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="c1"># Peak is on the right</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Peak is on the left (or mid is peak)</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">________________</span>  <span class="c1"># Fill in</span>
+
+    <span class="k">return</span> <span class="n">________________</span>  <span class="c1"># Fill in: peak index</span>
+</code></pre></div>
+
+<h2>📚 Example 1: First Bad Version</h2>
+<p><strong>Problem:</strong> Find first bad version in <code>[1, 2, 3, 4, 5]</code> where versions 4 and 5 are bad.</p>
+<p><strong>Condition:</strong> <code>isBadVersion(version)</code> returns True for bad versions.</p>
+<p><strong>Trace:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>left</th>
+<th>right</th>
+<th>mid</th>
+<th>isBadVersion(mid)</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>5</td>
+<td>3</td>
+<td>False</td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+<td><strong>______</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result:</strong> First bad version is <strong>______</strong></p>
+<h2>📚 Example 2: Find Peak Element</h2>
+<p><strong>Problem:</strong> Find peak in <code>[1, 2, 1, 3, 5, 6, 4]</code></p>
+<p><strong>Peaks:</strong> Index 1 (value 2) or index 5 (value 6)</p>
+<p><strong>Strategy:</strong> If <code>nums[mid] &lt; nums[mid+1]</code>, peak is on the right!</p>
+<hr />
+<h1>Part 7: Template Summary &amp; Decision Guide</h1>
+<h2>📊 Template Comparison Table</h2>
+<p><strong>Fill in the table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Template</th>
+<th>Loop Condition</th>
+<th>When True</th>
+<th>When False</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Template 1</strong> (Exact)</td>
+<td><code>left &lt;= right</code></td>
+<td><code>return mid</code></td>
+<td><code>left = mid + 1</code> or <code>right = mid - 1</code></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td><strong>Template 2</strong> (Lower Bound)</td>
+<td><strong>______</strong></td>
+<td><code>right = mid</code></td>
+<td><code>left = mid + 1</code></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td><strong>Template 3</strong> (Upper Bound)</td>
+<td><strong>______</strong></td>
+<td><code>left = mid</code> (+1 in mid)</td>
+<td><code>right = mid - 1</code></td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td><strong>Template 4</strong> (Answer Space)</td>
+<td><code>left &lt; right</code></td>
+<td>Depends on min/max</td>
+<td>Depends on min/max</td>
+<td><strong>______</strong></td>
+</tr>
+<tr>
+<td><strong>Template 5</strong> (Condition)</td>
+<td><code>left &lt; right</code></td>
+<td><code>right = mid</code> or <code>left = mid</code></td>
+<td>Opposite</td>
+<td><strong>______</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>🎯 Quick Decision Guide</h2>
+<p><strong>Choose the template based on problem:</strong></p>
+<ol>
+<li><strong>"Find exact value"</strong> → <strong>Template 1</strong> (Classic Binary Search)</li>
+<li><strong>"Find first occurrence"</strong> or <strong>"Find insertion position"</strong> → <strong>Template 2</strong> (Lower Bound)</li>
+<li><strong>"Find last occurrence"</strong> → <strong>Template 3</strong> (Upper Bound)</li>
+<li><strong>"Minimize maximum"</strong> or <strong>"Maximize minimum"</strong> → <strong>Template 4</strong> (Answer Space)</li>
+<li><strong>"Find transition point"</strong> or <strong>"Find boundary"</strong> → <strong>Template 5</strong> (Condition)</li>
+</ol>
+<hr />
+<h1>Part 8: Practice Problems</h1>
+<h2>Problem 1: Binary Search (Template 1)</h2>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Implement classic binary search</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h2>Problem 2: Search Insert Position (Template 2)</h2>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search_insert</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Implement using lower bound</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h2>Problem 3: Find First and Last Position (Templates 2 &amp; 3)</h2>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search_range</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Use both lower and upper bound</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h2>Problem 4: Capacity To Ship Packages (Template 4)</h2>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">ship_within_days</span><span class="p">(</span><span class="n">weights</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimize ship capacity to ship all packages in &#39;days&#39;.</span>
+
+<span class="sd">    TODO: Binary search on answer space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h2>Problem 5: First Bad Version (Template 5)</h2>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">first_bad_version</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Binary search on condition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<hr />
+<h2>Additional Practice Problems: Minimize Maximum &amp; Maximize Minimum</h2>
+<h3>🟢 Minimize Maximum (First True) - Additional Problems</h3>
+<h4>Problem 6: Smallest Divisor Given Threshold (LC 1283)</h4>
+<p><strong>Problem:</strong> Given an array <code>nums</code> and an integer <code>threshold</code>, find the <strong>smallest</strong> positive divisor such that the sum of <code>ceil(nums[i] / divisor)</code> for all elements is <strong>≤ threshold</strong>.</p>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">smallest_divisor</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Find smallest divisor using binary search on answer space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h4>Problem 7: Min Days to Make Bouquets (LC 1482)</h4>
+<p><strong>Problem:</strong> You have <code>n</code> flowers; <code>bloomDay[i]</code> = day flower <code>i</code> blooms. Make <code>m</code> bouquets, each of <code>k</code> <strong>adjacent</strong> flowers. Find the <strong>minimum</strong> number of days to wait so you can make all bouquets.</p>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">min_days</span><span class="p">(</span><span class="n">bloomDay</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Find minimum days using binary search on answer space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h3>🔵 Maximize Minimum (Last True) - Additional Problems</h3>
+<h4>Problem 8: Aggressive Cows (Classic)</h4>
+<p><strong>Problem:</strong> Place <code>c</code> cows in <code>positions</code> (sorted) so the <strong>minimum distance</strong> between any two cows is as <strong>large</strong> as possible.</p>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">aggressive_cows</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Maximize minimum distance using binary search on answer space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h4>Problem 9: Magnetic Force Between Two Balls (LC 1552)</h4>
+<p><strong>Problem:</strong> Place <code>m</code> balls in <code>position</code> (sorted) so the <strong>minimum</strong> magnetic force (distance) between any two balls is as <strong>large</strong> as possible.</p>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">max_distance</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Maximize minimum distance (same pattern as Aggressive Cows)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h4>Problem 10: Maximum Tastiness of Candy Basket (LC 2517)</h4>
+<p><strong>Problem:</strong> Pick <code>k</code> candies from <code>price</code> so the <strong>minimum</strong> absolute difference between any two chosen prices is as <strong>large</strong> as possible.</p>
+<p><strong>Your solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">maximum_tastiness</span><span class="p">(</span><span class="n">price</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Maximize minimum difference using binary search on answer space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Your code here:</span>
+</code></pre></div>
+
+<h4>Problem 11: Maximum Minimum Distance in Grid</h4>
+<p><strong>Problem:</strong> Place <code>k</code> objects in a <strong>grid</strong> (some cells blocked) so the <strong>minimum</strong> Euclidean or Manhattan distance between any two objects is as <strong>large</strong> as possible.</p>
+<p><strong>Note:</strong> This is a concept problem - practice the 1D version first (same as Aggressive Cows), then extend to 2D.</p>
+<h4>Problem 12: Allocate Mailboxes (Variant)</h4>
+<p><strong>Variant:</strong> Place <code>k</code> mailboxes among <code>houses</code> (sorted) so the <strong>minimum</strong> distance between any two <strong>mailboxes</strong> is as <strong>large</strong> as possible. (Same structure as Aggressive Cows.)</p>
+<p><strong>Note:</strong> LC 1478 "Allocate Mailboxes" minimizes <strong>total</strong> distance (DP). This variant uses <strong>maximize minimum</strong> (binary search) for practice.</p>
+<hr />
+<h1>Part 9: Answer Key</h1>
+<h2>Binary Search Core Concepts Answers</h2>
+<ol>
+<li>7 guesses (log₂(100) ≈ 6.64, rounded up)</li>
+<li>sorted</li>
+<li>O(n) to O(log n)</li>
+<li>half</li>
+<li>monotonic</li>
+</ol>
+<h2>Template 1 Answers</h2>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mid</span>
+    <span class="k">elif</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+1. <code>left &lt;= right</code> includes the case when <code>left == right</code> (single element to check)
+2. <code>left = mid + 1</code> because we know <code>nums[mid] &lt; target</code>, so mid can't be the answer
+3. <code>left + (right - left) // 2</code> prevents integer overflow when <code>left + right</code> is very large</p>
+<h2>Template 2 Answers</h2>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Exclude mid</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<p><strong>Comparison table:</strong>
+- Loop condition: <code>left &lt; right</code>
+- When true: <code>right = mid</code> (keep mid!)
+- When false: <code>left = mid + 1</code>
+- Updates: Only left moves or right stays</p>
+<h2>Template 3 Answers</h2>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># +1 critical!</span>
+    <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">target</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Exclude mid</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<p><strong>Why +1?</strong> When <code>left = mid</code> and <code>left = right - 1</code>, without +1:
+- <code>mid = (left + right) // 2 = left</code>
+- <code>left = mid</code> → <code>left = left</code> (no progress! infinite loop!)
+- With +1: <code>mid = left + 1 = right</code>, <code>left = mid</code> → <code>left = right</code> (loop ends)</p>
+<h2>Template 4 Answers</h2>
+<p><strong>Template 4A (Minimize):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">left</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>  <span class="c1"># Minimum possible answer</span>
+<span class="n">right</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>  <span class="c1"># Maximum possible answer</span>
+<span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Try smaller</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Need larger</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<p><strong>Template 4B (Maximize):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">left</span> <span class="o">=</span> <span class="n">min_distance</span>  <span class="c1"># Minimum possible</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">max_distance</span>  <span class="c1"># Maximum possible</span>
+<span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># +1 for maximize!</span>
+    <span class="k">if</span> <span class="n">is_valid</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Try larger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Too large</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<h2>Template 5 Answers</h2>
+<p><strong>First Bad Version:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">isBadVersion</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid (could be first bad)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Exclude mid (search right)</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<p><strong>Find Peak:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Peak on right</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Peak on left or mid is peak</span>
+<span class="k">return</span> <span class="n">left</span>
+</code></pre></div>
+
+<h2>Template Summary Answers</h2>
+<table>
+<thead>
+<tr>
+<th>Template</th>
+<th>Loop Condition</th>
+<th>When True</th>
+<th>When False</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Template 1</strong></td>
+<td><code>left &lt;= right</code></td>
+<td><code>return mid</code></td>
+<td><code>left = mid + 1</code> or <code>right = mid - 1</code></td>
+<td>Find exact value</td>
+</tr>
+<tr>
+<td><strong>Template 2</strong></td>
+<td><code>left &lt; right</code></td>
+<td><code>right = mid</code></td>
+<td><code>left = mid + 1</code></td>
+<td>Find first position</td>
+</tr>
+<tr>
+<td><strong>Template 3</strong></td>
+<td><code>left &lt; right</code></td>
+<td><code>left = mid</code></td>
+<td><code>right = mid - 1</code></td>
+<td>Find last position</td>
+</tr>
+<tr>
+<td><strong>Template 4</strong></td>
+<td><code>left &lt; right</code></td>
+<td>Depends on min/max</td>
+<td>Depends</td>
+<td>Minimize/maximize</td>
+</tr>
+<tr>
+<td><strong>Template 5</strong></td>
+<td><code>left &lt; right</code></td>
+<td><code>right = mid</code> or <code>left = mid</code></td>
+<td>Opposite</td>
+<td>Find boundary</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>Study Checklist</h1>
+<p>Use this checklist to track your progress:</p>
+<h2>Binary Search Fundamentals</h2>
+<ul>
+<li>[ ] Can explain binary search intuitively (guessing game)</li>
+<li>[ ] Understand why sorted array is required</li>
+<li>[ ] Understand time complexity O(log n)</li>
+<li>[ ] Can explain monotonic property</li>
+</ul>
+<h2>Template 1: Classic Binary Search</h2>
+<ul>
+<li>[ ] Can write Template 1 from memory</li>
+<li>[ ] Understand why <code>left &lt;= right</code></li>
+<li>[ ] Understand why <code>left = mid + 1</code></li>
+<li>[ ] Can prevent integer overflow</li>
+</ul>
+<h2>Template 2: Lower Bound</h2>
+<ul>
+<li>[ ] Can write Template 2 from memory</li>
+<li>[ ] Understand <code>left &lt; right</code> vs <code>left &lt;= right</code></li>
+<li>[ ] Understand why <code>right = mid</code> (keep mid!)</li>
+<li>[ ] Can find insertion position</li>
+</ul>
+<h2>Template 3: Upper Bound</h2>
+<ul>
+<li>[ ] Can write Template 3 from memory</li>
+<li>[ ] Understand why <code>+1</code> in mid calculation</li>
+<li>[ ] Understand why <code>left = mid</code> (keep mid!)</li>
+<li>[ ] Can find last occurrence</li>
+</ul>
+<h2>Template 4: Answer Space</h2>
+<ul>
+<li>[ ] Can identify answer space problems</li>
+<li>[ ] Can implement minimize maximum</li>
+<li>[ ] Can implement maximize minimum</li>
+<li>[ ] Can write validation function</li>
+</ul>
+<h2>Template 5: Condition</h2>
+<ul>
+<li>[ ] Can identify condition-based problems</li>
+<li>[ ] Can write condition function</li>
+<li>[ ] Can find transition points</li>
+<li>[ ] Can find peaks/valleys</li>
+</ul>
+<h2>Problem Solving</h2>
+<ul>
+<li>[ ] Can choose correct template for problem</li>
+<li>[ ] Can implement Binary Search (Template 1)</li>
+<li>[ ] Can implement Search Insert Position (Template 2)</li>
+<li>[ ] Can implement Find First and Last Position (Templates 2 &amp; 3)</li>
+<li>[ ] Can solve minimize/maximize problems (Template 4)</li>
+<li>[ ] Can solve condition-based problems (Template 5)</li>
+</ul>
+<hr />
+<h1>Part 10: Solved Problems - Learn from Complete Solutions</h1>
+<h2>Solved Problem 1: Binary Search (Template 1)</h2>
+<p><strong>Problem:</strong> Find target in sorted array, return index or -1.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classic binary search: find exact value.</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mid</span>
+        <span class="k">elif</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="c1"># Example: nums = [-1,0,3,5,9,12], target = 9</span>
+<span class="c1"># Step 1: left=0, right=5, mid=2, nums[2]=3 &lt; 9 → left=3</span>
+<span class="c1"># Step 2: left=3, right=5, mid=4, nums[4]=9 == 9 → return 4</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Use <code>left &lt;= right</code> to include single element case
+- Update <code>left = mid + 1</code> and <code>right = mid - 1</code> (exclude mid)
+- Prevent overflow with <code>left + (right - left) // 2</code></p>
+<h2>Solved Problem 2: Search Insert Position (Template 2)</h2>
+<p><strong>Problem:</strong> Find insertion position for target in sorted array.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search_insert</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find insertion position using lower bound.</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid (could be insertion position)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Exclude mid (search right)</span>
+
+    <span class="c1"># Handle case when target &gt; all elements</span>
+    <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">left</span>
+
+<span class="c1"># Example: nums = [1,3,5,6], target = 5</span>
+<span class="c1"># Result: 2 (first position where &gt;= 5)</span>
+
+<span class="c1"># Example: nums = [1,3,5,6], target = 2</span>
+<span class="c1"># Result: 1 (insert at position 1)</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Use <code>left &lt; right</code> (not &lt;=)
+- When <code>nums[mid] &gt;= target</code>: <code>right = mid</code> (keep mid!)
+- This finds lower bound = insertion position</p>
+<h2>Solved Problem 3: Find First and Last Position (Templates 2 &amp; 3)</h2>
+<p><strong>Problem:</strong> Find first and last position of target in sorted array.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search_range</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find first and last position using lower and upper bound.</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">find_first</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lower bound: first position where &gt;= target&quot;&quot;&quot;</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="p">:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">left</span> <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">find_last</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Upper bound: last position where &lt;= target&quot;&quot;&quot;</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># +1 critical!</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">target</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Exclude mid</span>
+        <span class="k">return</span> <span class="n">left</span> <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nums</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">first</span> <span class="o">=</span> <span class="n">find_first</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">first</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">last</span> <span class="o">=</span> <span class="n">find_last</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">]</span>
+
+<span class="c1"># Example: nums = [5,7,7,8,8,10], target = 8</span>
+<span class="c1"># First: 3 (lower bound)</span>
+<span class="c1"># Last: 4 (upper bound)</span>
+<span class="c1"># Result: [3, 4]</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- First: Use lower bound (Template 2)
+- Last: Use upper bound (Template 3) with +1 in mid!
+- Combine both for complete range</p>
+<h2>Solved Problem 4: Capacity To Ship Packages (Template 4)</h2>
+<p><strong>Problem:</strong> Minimize ship capacity to ship all packages within D days.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">ship_within_days</span><span class="p">(</span><span class="n">weights</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimize ship capacity using binary search on answer space.</span>
+
+<span class="sd">    Strategy:</span>
+<span class="sd">    1. Answer space: [max(weights), sum(weights)]</span>
+<span class="sd">    2. For each capacity, check if we can ship in &lt;= days</span>
+<span class="sd">    3. Minimize valid capacity</span>
+
+<span class="sd">    Time: O(n * log(sum(weights)))</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">can_ship</span><span class="p">(</span><span class="n">capacity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if we can ship with given capacity in &lt;= days&quot;&quot;&quot;</span>
+        <span class="n">days_needed</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">current_weight</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">current_weight</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">&gt;</span> <span class="n">capacity</span><span class="p">:</span>
+                <span class="n">days_needed</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">current_weight</span> <span class="o">=</span> <span class="n">weight</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_weight</span> <span class="o">+=</span> <span class="n">weight</span>
+
+        <span class="k">return</span> <span class="n">days_needed</span> <span class="o">&lt;=</span> <span class="n">days</span>
+
+    <span class="c1"># Answer space: minimum = max single package, maximum = sum of all</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">can_ship</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Try smaller capacity</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Need larger capacity</span>
+
+    <span class="k">return</span> <span class="n">left</span>  <span class="c1"># Minimum valid capacity</span>
+
+<span class="c1"># Example: weights = [1,2,3,4,5,6,7,8,9,10], days = 5</span>
+<span class="c1"># Answer space: [10, 55]</span>
+<span class="c1"># Result: 15 (minimum capacity that works)</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Binary search on answer space (not the array!)
+- Validation function checks if answer is feasible
+- Minimize: <code>right = mid</code> when valid, <code>left = mid + 1</code> when invalid</p>
+<h2>Solved Problem 5: Koko Eating Bananas (Template 4)</h2>
+<p><strong>Problem:</strong> Minimize eating speed to finish all bananas within h hours.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">min_eating_speed</span><span class="p">(</span><span class="n">piles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">h</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimize eating speed using binary search on answer space.</span>
+
+<span class="sd">    Strategy:</span>
+<span class="sd">    1. Answer space: [1, max(piles)]</span>
+<span class="sd">    2. For each speed, calculate hours needed</span>
+<span class="sd">    3. Minimize speed that allows finishing in &lt;= h hours</span>
+
+<span class="sd">    Time: O(n * log(max(piles)))</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">can_finish</span><span class="p">(</span><span class="n">speed</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if we can finish all bananas with given speed in &lt;= h hours&quot;&quot;&quot;</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">pile</span> <span class="ow">in</span> <span class="n">piles</span><span class="p">:</span>
+            <span class="n">hours</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pile</span> <span class="o">+</span> <span class="n">speed</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">speed</span>  <span class="c1"># Ceiling division</span>
+            <span class="k">if</span> <span class="n">hours</span> <span class="o">&gt;</span> <span class="n">h</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">hours</span> <span class="o">&lt;=</span> <span class="n">h</span>
+
+    <span class="c1"># Answer space: minimum = 1, maximum = max pile</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">piles</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">can_finish</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Try slower speed</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Need faster speed</span>
+
+    <span class="k">return</span> <span class="n">left</span>
+
+<span class="c1"># Example: piles = [3,6,7,11], h = 8</span>
+<span class="c1"># Answer space: [1, 11]</span>
+<span class="c1"># Result: 4 (minimum speed that works)</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Answer space: <code>[1, max(piles)]</code>
+- Validation: calculate total hours needed
+- Minimize: smaller valid answer is better</p>
+<h2>Solved Problem 6: First Bad Version (Template 5)</h2>
+<p><strong>Problem:</strong> Find first bad version in sorted versions.</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">first_bad_version</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find first bad version using binary search on condition.</span>
+
+<span class="sd">    Condition: isBadVersion(version) returns True for bad versions.</span>
+<span class="sd">    Find first position where condition is True.</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">isBadVersion</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>  <span class="c1"># Keep mid (could be first bad)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Exclude mid (search right)</span>
+
+    <span class="k">return</span> <span class="n">left</span>  <span class="c1"># First bad version</span>
+
+<span class="c1"># Example: n = 5, versions 4 and 5 are bad</span>
+<span class="c1"># Step 1: left=1, right=5, mid=3, isBadVersion(3)=False → left=4</span>
+<span class="c1"># Step 2: left=4, right=5, mid=4, isBadVersion(4)=True → right=4</span>
+<span class="c1"># Step 3: left=4, right=4, loop ends → return 4</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Binary search on condition (not exact value)
+- When condition True: keep mid (could be answer)
+- When condition False: exclude mid (search right)</p>
+<h2>Solved Problem 7: Find Peak Element (Template 5)</h2>
+<p><strong>Problem:</strong> Find any peak element (element &gt; neighbors).</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">find_peak_element</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find peak element using binary search on condition.</span>
+
+<span class="sd">    Strategy:</span>
+<span class="sd">    - If nums[mid] &lt; nums[mid+1]: peak is on the right</span>
+<span class="sd">    - Else: peak is on the left or mid is peak</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="c1"># Check if we&#39;re on ascending slope</span>
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+            <span class="c1"># Peak is on the right (ascending means peak ahead)</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Peak is on the left or mid is peak (descending means peak behind)</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>
+
+    <span class="k">return</span> <span class="n">left</span>  <span class="c1"># Peak index</span>
+
+<span class="c1"># Example: nums = [1,2,1,3,5,6,4]</span>
+<span class="c1"># Peaks: index 1 (value 2) or index 5 (value 6)</span>
+<span class="c1"># Result: 5 (one of the peaks)</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Binary search on condition (ascending vs descending)
+- Ascending slope → peak on right
+- Descending slope → peak on left or current is peak</p>
+<h2>Solved Problem 8: Search in Rotated Sorted Array (Template 5)</h2>
+<p><strong>Problem:</strong> Search target in rotated sorted array (no duplicates).</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search in rotated sorted array.</span>
+
+<span class="sd">    Strategy:</span>
+<span class="sd">    1. Find which side is sorted</span>
+<span class="sd">    2. Check if target is in sorted side</span>
+<span class="sd">    3. Otherwise, search other side</span>
+
+<span class="sd">    Time: O(log n)</span>
+<span class="sd">    Space: O(1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mid</span>
+
+        <span class="c1"># Left half is sorted</span>
+        <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]:</span>
+            <span class="c1"># Target is in sorted left half</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="o">&lt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># Right half is sorted</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Target is in sorted right half</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span> <span class="o">&lt;=</span> <span class="n">nums</span><span class="p">[</span><span class="n">right</span><span class="p">]:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="c1"># Example: nums = [4,5,6,7,0,1,2], target = 0</span>
+<span class="c1"># Rotated at index 4</span>
+<span class="c1"># Result: 4</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Determine which half is sorted
+- Check if target is in sorted half
+- Otherwise, search the other half</p>
+<h2>Additional Practice Problems Answers</h2>
+<h3>Problem 6: Smallest Divisor Given Threshold (LC 1283)</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">smallest_divisor</span><span class="p">(</span><span class="n">nums</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">d</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">threshold</span>
+
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Answer space: <code>[1, max(nums)]</code>
+- Ceiling division: <code>(x + d - 1) // d</code>
+- Minimize: <code>right = mid</code> when valid</p>
+<h3>Problem 7: Min Days to Make Bouquets (LC 1482)</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">min_days</span><span class="p">(</span><span class="n">bloomDay</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bloomDay</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">m</span> <span class="o">*</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">day</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">bouquets</span><span class="p">,</span> <span class="n">streak</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">bloomDay</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">day</span><span class="p">:</span>
+                <span class="n">streak</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">streak</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="n">bouquets</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">streak</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">streak</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">bouquets</span> <span class="o">&gt;=</span> <span class="n">m</span>
+
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bloomDay</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">bloomDay</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- Answer space: <code>[min(bloomDay), max(bloomDay)]</code>
+- Track <strong>adjacent</strong> groups (streak)
+- When streak == k: make bouquet, reset streak</p>
+<h3>Problem 8: Aggressive Cows</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">aggressive_cows</span><span class="p">(</span><span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">-</span> <span class="n">last</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">c</span>
+
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>  <span class="c1"># +1 for maximize!</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- <strong>Maximize:</strong> Use <code>+1</code> in mid calculation!
+- When valid: <code>left = mid</code> (try larger)
+- Greedy: place first at <code>positions[0]</code>, then next at first position &gt;= <code>last + d</code></p>
+<h3>Problem 9: Magnetic Force Between Two Balls (LC 1552)</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">max_distance</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">position</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">-</span> <span class="n">last</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">m</span>
+
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- <strong>Identical to Aggressive Cows!</strong>
+- Same pattern: maximize minimum distance</p>
+<h3>Problem 10: Maximum Tastiness of Candy Basket (LC 2517)</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">maximum_tastiness</span><span class="p">(</span><span class="n">price</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">price</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">price</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">price</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">price</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">-</span> <span class="n">last</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">k</span>
+
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- <strong>Sort first!</strong>
+- Answer space: <code>[0, max(price) - min(price)]</code>
+- Greedy selection: pick first valid candy</p>
+<h3>Problem 11: Maximum Minimum Distance in Grid</h3>
+<p><strong>Concept:</strong> Extend Aggressive Cows pattern to 2D:
+1. Enumerate all valid grid cells (not blocked)
+2. Use same binary search on distance
+3. In <code>ok(d)</code>: use Manhattan <code>|x1-x2|+|y1-y2|</code> or Euclidean <code>sqrt((x1-x2)²+(y1-y2)²)</code>
+4. Greedily place points with min distance &gt;= d</p>
+<h3>Problem 12: Allocate Mailboxes (Variant)</h3>
+<p><strong>Complete code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_mailboxes_max_min</span><span class="p">(</span><span class="n">houses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">houses</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">houses</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">houses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">houses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">ok</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">houses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">houses</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="o">-</span> <span class="n">last</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">k</span>
+
+    <span class="k">while</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">lo</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong>
+- <strong>Identical to Aggressive Cows!</strong>
+- Note: LC 1478 minimizes total distance (DP), this variant maximizes minimum distance (binary search)</p>
+<hr />
+<p><strong>Good luck mastering Binary Search! 🚀</strong></p>
+<p><em>Remember: The key is recognizing which template to use and understanding the subtle differences!</em></p>
+</body>
+</html>

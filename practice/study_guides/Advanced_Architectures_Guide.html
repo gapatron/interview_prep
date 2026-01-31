@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Advanced Architectures Guide — Diffusion, Transformers, Popular Nets</title>
+  <style>
+    body { font-family: DejaVu Sans, Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background: #2c3e50; color: white; }
+    h1 { border-bottom: 3px solid #2c3e50; padding-bottom: 10px; }
+    h2 { border-bottom: 2px solid #ddd; margin-top: 30px; }
+    h3 { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h1>Advanced Architectures Guide — Diffusion, Flow Matching, Transformers, Popular Nets</h1>
+<p><strong>Purpose:</strong> Chapters on diffusion models &amp; flow matching (design, bugs, alternatives), building the Transformer from scratch, and implementing popular architectures (forward → layers, stacking). <strong>Interview-style: solving problems, finding bugs, considering alternatives.</strong></p>
+<p><strong>Estimated study time:</strong> 8–14 hours (with code challenges)</p>
+
+<hr>
+<h1>Table of Contents</h1>
+<ol>
+  <li><a href="#chapter-a">Chapter A: Diffusion Models &amp; Flow Matching</a></li>
+  <li><a href="#chapter-b">Chapter B: Transformers</a></li>
+  <li><a href="#chapter-c">Chapter C: Building Popular Architectures</a></li>
+  <li><a href="#code-roadmap">Code Challenges Roadmap</a></li>
+</ol>
+
+<hr>
+<h1 id="chapter-a">Chapter A: Diffusion Models &amp; Flow Matching</h1>
+
+<h2>A.1 Core Ideas</h2>
+<ul>
+  <li><strong>Diffusion (DDPM-style):</strong> Data x₀ is gradually noised to x_T; model learns to <strong>predict noise</strong> so we can reverse and sample x₀ from x_T.</li>
+  <li><strong>Forward process:</strong> x_t = √ᾱ_t·x₀ + √(1−ᾱ_t)·ε; ᾱ_t from noise schedule (e.g. linear betas).</li>
+  <li><strong>Training:</strong> Sample t, noise ε, form x_t, train model to predict ε. Loss = MSE(pred_ε, ε).</li>
+  <li><strong>Flow matching</strong> (alternative): Learn vector field; often simpler training and faster sampling.</li>
+</ul>
+
+<h2>A.2 Design Choices &amp; Interview Questions</h2>
+<table>
+  <tr><th>Topic</th><th>What to say</th></tr>
+  <tr><td>Noise schedule</td><td>Linear vs cosine; cosine often better for images.</td></tr>
+  <tr><td>Predict ε vs x₀</td><td>Predicting noise ε is common; model gets x_t, t → ĥε; loss = ‖ĥε − ε‖².</td></tr>
+  <tr><td>Timestep conditioning</td><td>t must be fed to model (embedding or sinusoidal); broadcast to spatial dims.</td></tr>
+  <tr><td>Flow matching vs diffusion</td><td>Flow: ODE flow, fewer steps. Diffusion: many steps unless distilled.</td></tr>
+</table>
+
+<h2>A.3 Common Bugs in Diffusion Code</h2>
+<table>
+  <tr><th>Bug</th><th>Fix</th></tr>
+  <tr><td>Wrong shape for x_t</td><td>Keep (N, C, H, W) through noise and model.</td></tr>
+  <tr><td>Timestep t not used</td><td>Pass t into model (embed and add or concat).</td></tr>
+  <tr><td>Alpha shape</td><td>Reshape ᾱ_t to (N, 1, 1, 1) for broadcast with (N, C, H, W).</td></tr>
+  <tr><td>Device mismatch</td><td>Move x_t, t, ε to same device as model.</td></tr>
+</table>
+
+<h2>A.4 Alternatives &amp; Extensions</h2>
+<ul>
+  <li><strong>DDIM:</strong> Deterministic sampler; fewer steps.</li>
+  <li><strong>Flow matching / Rectified Flow:</strong> dx/dt = v_t(x); ODE solver.</li>
+  <li><strong>Latent diffusion:</strong> Diffusion in VAE latent space (e.g. Stable Diffusion).</li>
+  <li><strong>Classifier-free guidance:</strong> ĥε = ĥε_u + w·(ĥε_c − ĥε_u).</li>
+</ul>
+
+<hr>
+<h1 id="chapter-b">Chapter B: Transformers</h1>
+
+<h2>B.1 Building Blocks</h2>
+<ul>
+  <li><strong>Scaled dot-product attention:</strong> Attention(Q,K,V) = softmax(QKᵀ/√d_k)V. Shapes: (B, H, L, head_dim).</li>
+  <li><strong>Multi-head:</strong> Project Q,K,V; reshape to (B, H, L, d_k); attention per head; concat; final Linear.</li>
+  <li><strong>Position encoding:</strong> Sinusoidal or learned Embedding(max_len, d_model).</li>
+  <li><strong>Encoder block:</strong> Pre-LN → Self-attention → residual → Pre-LN → FFN (Linear→GELU→Linear) → residual.</li>
+</ul>
+
+<h2>B.2 Forward Flow (Encoder-Only)</h2>
+<ol>
+  <li>Input → embedding + positional encoding.</li>
+  <li>For each block: x = x + MultiHeadAttention(LayerNorm(x)); x = x + FFN(LayerNorm(x)).</li>
+  <li>Output: (B, L, d_model).</li>
+</ol>
+
+<h2>B.3 Common Bugs in Transformer Code</h2>
+<table>
+  <tr><th>Bug</th><th>Fix</th></tr>
+  <tr><td>Causal mask</td><td>Upper triangle = -inf before softmax; use tril() for valid.</td></tr>
+  <tr><td>Dimension mismatch</td><td>d_model % num_heads == 0; head_dim = d_model // num_heads.</td></tr>
+  <tr><td>Forgetting LayerNorm</td><td>Pre-LN: norm before attention/FFN, then add residual.</td></tr>
+  <tr><td>Position encoding not added</td><td>Add PE to embeddings before first block.</td></tr>
+  <tr><td>Mask shape</td><td>Use (1, 1, L, L) or (B, 1, L, L) for broadcasting.</td></tr>
+</table>
+
+<h2>B.4 Design Choices</h2>
+<ul>
+  <li><strong>Pre-LN vs Post-LN:</strong> Pre-LN more stable for deep transformers.</li>
+  <li><strong>Absolute vs relative position:</strong> Relative can generalize to longer sequences.</li>
+</ul>
+
+<hr>
+<h1 id="chapter-c">Chapter C: Building Popular Architectures</h1>
+
+<h2>C.1 Philosophy: Forward First, Then Layers</h2>
+<ol>
+  <li>Write the forward pass in words.</li>
+  <li>Define submodules (ResidualBlock, ConvBlock) with clear shapes.</li>
+  <li>Stack in forward; ensure shapes match (skip connections).</li>
+  <li>Register all blocks as nn.Module children.</li>
+</ol>
+
+<h2>C.2 ResNet</h2>
+<ul>
+  <li><strong>Idea:</strong> y = F(x) + x; shortcut so gradients flow.</li>
+  <li><strong>Basic block:</strong> Two 3×3 convs, BN, ReLU; add input. If stride≠1 or in_c≠out_c: shortcut = 1×1 conv + BN.</li>
+  <li><strong>Forward:</strong> stem → layer1, layer2, layer3, layer4 → global pool → linear.</li>
+</ul>
+
+<h2>C.3 VGG-Style &amp; Simple CNN</h2>
+<ul>
+  <li>Stack 3×3 convs (padding=1); periodic MaxPool(2); flatten → linear.</li>
+  <li>Ensure out_channels of block i = in_channels of block i+1; final linear in_features = last channel count.</li>
+</ul>
+
+<h2>C.4 Checklist for Building Correctly</h2>
+<table>
+  <tr><th>Step</th><th>Check</th></tr>
+  <tr><td>Shapes</td><td>Assert shapes after each block; especially after stride-2 and skip add.</td></tr>
+  <tr><td>Device</td><td>model.to(device); data.to(device).</td></tr>
+  <tr><td>Registration</td><td>Every nn.Module used in forward is stored as attribute or in Sequential.</td></tr>
+  <tr><td>Output</td><td>Final layer: logits (no softmax if using CrossEntropyLoss).</td></tr>
+</table>
+
+<hr>
+<h1 id="code-roadmap">Code Challenges Roadmap</h1>
+<table>
+  <tr><th>Folder</th><th>Content</th><th>Time</th></tr>
+  <tr><td>10_diffusion_flow/</td><td>Noise prediction model, DDPM step, buggy diffusion</td><td>2–3 h</td></tr>
+  <tr><td>11_transformers/</td><td>Scaled dot-product attention, multi-head, encoder block</td><td>2–3 h</td></tr>
+  <tr><td>12_popular_architectures/</td><td>ResidualBlock, Simple CNN from scratch</td><td>2–3 h</td></tr>
+</table>
+<p>Run from <code>practice/week4_pytorch/</code> (e.g. <code>python week4_pytorch/10_diffusion_flow/challenge_noise_prediction.py</code>).</p>
+
+<p><strong>Good luck with diffusion, flow matching, transformers, and architecture design in interviews.</strong></p>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+"""Solution: Stage 1 train all; Stage 2 freeze backbone, optimizer on head only."""
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+
+class Backbone(nn.Module):
+    def __init__(self, in_dim, hidden):
+        super().__init__()
+        self.fc = nn.Linear(in_dim, hidden)
+
+    def forward(self, x):
+        return torch.relu(self.fc(x))
+
+
+class Head(nn.Module):
+    def __init__(self, hidden, num_classes):
+        super().__init__()
+        self.fc = nn.Linear(hidden, num_classes)
+
+    def forward(self, z):
+        return self.fc(z)
+
+
+class BackboneHead(nn.Module):
+    def __init__(self, in_dim, hidden, num_classes):
+        super().__init__()
+        self.backbone = Backbone(in_dim, hidden)
+        self.head = Head(hidden, num_classes)
+
+    def forward(self, x):
+        return self.head(self.backbone(x))
+
+
+def train_one_epoch(model, loader, criterion, optimizer, device):
+    model.train()
+    total, n = 0.0, 0
+    for x, y in loader:
+        x, y = x.to(device), y.to(device)
+        optimizer.zero_grad()
+        loss = criterion(model(x), y)
+        loss.backward()
+        optimizer.step()
+        total += loss.item()
+        n += 1
+    return total / max(n, 1)
+
+
+def validate(model, loader, criterion, device):
+    model.eval()
+    total_loss, correct, total = 0.0, 0, 0
+    with torch.no_grad():
+        for x, y in loader:
+            x, y = x.to(device), y.to(device)
+            logits = model(x)
+            total_loss += criterion(logits, y).item()
+            correct += (logits.argmax(1) == y).sum().item()
+            total += y.size(0)
+    return total_loss / max(len(loader), 1), correct / max(total, 1)
+
+
+def two_stage_train(
+    model: BackboneHead,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    criterion: nn.Module,
+    device: torch.device,
+    stage1_epochs: int = 2,
+    stage2_epochs: int = 2,
+    lr: float = 1e-3,
+) -> float:
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    for _ in range(stage1_epochs):
+        train_one_epoch(model, train_loader, criterion, optimizer, device)
+    for p in model.backbone.parameters():
+        p.requires_grad = False
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
+    for _ in range(stage2_epochs):
+        train_one_epoch(model, train_loader, criterion, optimizer, device)
+    _, val_acc = validate(model, val_loader, criterion, device)
+    return val_acc
+
+
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = BackboneHead(8, 16, 2).to(device)
+    train_ds = TensorDataset(torch.randn(64, 8), torch.randint(0, 2, (64,)))
+    val_ds = TensorDataset(torch.randn(32, 8), torch.randint(0, 2, (32,)))
+    train_loader = DataLoader(train_ds, batch_size=8, shuffle=True)
+    val_loader = DataLoader(val_ds, batch_size=8)
+    criterion = nn.CrossEntropyLoss()
+    final_acc = two_stage_train(model, train_loader, val_loader, criterion, device, stage1_epochs=2, stage2_epochs=2)
+    assert 0 <= final_acc <= 1
+    assert not any(p.requires_grad for p in model.backbone.parameters())
+    print("Two-stage train OK.")

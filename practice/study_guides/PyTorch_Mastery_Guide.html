@@ -1,0 +1,500 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>PyTorch Mastery Guide</title><style>
+body { font-family: DejaVu Sans, Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+th { background: #4CAF50; color: white; }
+h1 { border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+h2 { border-bottom: 2px solid #ddd; margin-top: 30px; }
+</style></head><body><h1>PyTorch Mastery Guide — Adobe Interview Prep</h1>
+<p><strong>Purpose:</strong> Complete review for PyTorch challenges: data processing, model training, connecting/concatenating/conditioning, and debugging.</p>
+<p><strong>Estimated study time:</strong> 8–12 hours</p>
+<hr />
+<h1>Table of Contents</h1>
+<ol>
+<li><a href="#1-core-concepts">Core Concepts</a></li>
+<li><a href="#2-tensors--data-processing">Tensors &amp; Data Processing</a></li>
+<li><a href="#3-datasets--dataloaders">Datasets &amp; DataLoaders</a></li>
+<li><a href="#4-model-building-layers-concatenation-conditioning">Model Building: Layers, Concatenation, Conditioning</a></li>
+<li><a href="#5-training-loop--optimization">Training Loop &amp; Optimization</a></li>
+<li><a href="#6-common-bugs--how-to-fix-them">Common Bugs &amp; How to Fix Them</a></li>
+<li><a href="#7-challenges--self-assessment">Challenges &amp; Self-Assessment</a></li>
+<li><a href="#8-answer-key">Answer Key</a></li>
+</ol>
+<hr />
+<h1>1. Core Concepts</h1>
+<h2>1.1 Why PyTorch?</h2>
+<ul>
+<li><strong>Dynamic computation graph</strong> — define-by-run; easier to debug.</li>
+<li><strong>Tensors</strong> — like NumPy arrays but on CPU/GPU, with autograd.</li>
+<li><strong>Device</strong> — <code>.to(device)</code> or <code>.cuda()</code> / <code>.cpu()</code>.</li>
+</ul>
+<h2>1.2 Key Imports (Memorize)</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+</code></pre></div>
+
+<h2>1.3 Device Handling</h2>
+<p><strong>Fill in the blanks:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;______&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;______&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Answers:</strong> <code>"cuda"</code>, <code>"cpu"</code>, <code>.to(device)</code>, <code>.to(device)</code>.</p>
+<h2>1.4 Tensor Basics</h2>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Code</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create from list</td>
+<td><code>torch.tensor([1,2,3])</code></td>
+<td>dtype inferred</td>
+</tr>
+<tr>
+<td>Zeros</td>
+<td><code>torch.zeros(2, 3)</code></td>
+<td>Shape (2, 3)</td>
+</tr>
+<tr>
+<td>Ones</td>
+<td><code>torch.ones(2, 3)</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Random</td>
+<td><code>torch.randn(2, 3)</code></td>
+<td>Standard normal</td>
+</tr>
+<tr>
+<td>From NumPy</td>
+<td><code>torch.from_numpy(arr)</code></td>
+<td>Shares memory by default</td>
+</tr>
+<tr>
+<td>To NumPy</td>
+<td><code>tensor.numpy()</code></td>
+<td>CPU only</td>
+</tr>
+<tr>
+<td>Shape</td>
+<td><code>tensor.shape</code> or <code>.size()</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Reshape</td>
+<td><code>tensor.view(-1, 4)</code> or <code>.reshape(-1, 4)</code></td>
+<td><code>-1</code> infers</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>2. Tensors &amp; Data Processing</h1>
+<h2>2.1 Slicing, Indexing, Masking</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Slicing: same as NumPy</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>      <span class="c1"># first row</span>
+<span class="n">t</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>      <span class="c1"># second column</span>
+<span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>    <span class="c1"># row 1, cols 1–2</span>
+
+<span class="c1"># Boolean mask</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">3</span>
+<span class="n">t</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>      <span class="c1"># 1D tensor of elements where mask is True</span>
+</code></pre></div>
+
+<h2>2.2 Concatenation &amp; Stacking</h2>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Code</th>
+<th>Output shape (example)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Concatenate dim 0</td>
+<td><code>torch.cat([a, b], dim=0)</code></td>
+<td>(n1+n2, C)</td>
+</tr>
+<tr>
+<td>Concatenate dim 1</td>
+<td><code>torch.cat([a, b], dim=1)</code></td>
+<td>(N, C1+C2)</td>
+</tr>
+<tr>
+<td>Stack new dim</td>
+<td><code>torch.stack([a, b], dim=0)</code></td>
+<td>(2, N, C)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule:</strong> <code>cat</code> preserves existing dims; <code>stack</code> adds a new dim.</p>
+<h2>2.3 Squeeze &amp; Unsqueeze</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>    <span class="c1"># removes all size-1 dims → (4, 8)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># add dim at 0 → (1, 1, 4, 1, 8)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># add dim at 1 → (1, 1, 4, 1, 8)</span>
+</code></pre></div>
+
+<p><strong>Interview tip:</strong> Wrong <code>dim</code> in <code>cat</code>/<code>stack</code>/<code>squeeze</code>/<code>unsqueeze</code> is a common bug.</p>
+<h2>2.4 Permute &amp; Transpose</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># (N, C, L)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>        <span class="c1"># (N, L, C)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>         <span class="c1"># same as permute(0, 2, 1) for 3D</span>
+</code></pre></div>
+
+<h2>2.5 Fill-in: Data Processing</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Given: a (N, 3, 32, 32) and b (N, 5). Produce (N, 8, 32, 32).</span>
+<span class="c1"># b must be broadcast to (N, 5, 1, 1), then expanded to (N, 5, 32, 32).</span>
+
+<span class="n">b_expanded</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">______</span><span class="p">)</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">______</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">______</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b_expanded</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">______</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Answer:</strong> <code>b.unsqueeze(2).unsqueeze(3).expand(-1, -1, 32, 32)</code> then <code>torch.cat([a, b_expanded], dim=1)</code>.</p>
+<hr />
+<h1>3. Datasets &amp; DataLoaders</h1>
+<h2>3.1 Custom Dataset Template</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">MyDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">______</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">______</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Answers:</strong> <code>data</code> (or <code>labels</code>), <code>torch.tensor(x, dtype=...)</code>, <code>torch.tensor(y, dtype=...)</code>.</p>
+<h2>3.2 DataLoader</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># 0 for Windows/debug</span>
+    <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># faster GPU transfer</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+    <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">batch_y</span> <span class="o">=</span> <span class="n">batch_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="o">...</span>
+</code></pre></div>
+
+<h2>3.3 Common Bug: Wrong dtype</h2>
+<ul>
+<li>Labels for classification: <code>torch.long</code> (integer).</li>
+<li>Inputs: <code>torch.float32</code>.</li>
+<li>Using <code>float</code> labels with <code>nn.CrossEntropyLoss</code> → <strong>error</strong>.</li>
+</ul>
+<hr />
+<h1>4. Model Building: Layers, Concatenation, Conditioning</h1>
+<h2>4.1 Sequential &amp; Module</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># Or with nn.Module (flexible)</span>
+<span class="k">class</span> <span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>4.2 Concatenating Features (Skip Connections / Multi-Input)</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">ConcatBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_a</span><span class="p">,</span> <span class="n">in_b</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_a</span> <span class="o">+</span> <span class="n">in_b</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>  <span class="c1"># cat along feature dim</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_a</span><span class="p">,</span> <span class="n">x_b</span><span class="p">):</span>
+        <span class="c1"># x_a: (N, in_a), x_b: (N, in_b)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x_a</span><span class="p">,</span> <span class="n">x_b</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>4.3 Conditioning (e.g. FiLM, Embedding Conditioning)</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Condition linear layer by a vector (e.g. class embedding)</span>
+<span class="k">class</span> <span class="nc">ConditionalLinear</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">,</span> <span class="n">cond_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">cond_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">)</span>  <span class="c1"># scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">cond_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">)</span>   <span class="c1"># shift</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">cond</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">out</span> <span class="o">+</span> <span class="n">beta</span>
+</code></pre></div>
+
+<h2>4.4 Connecting Two Modules (Plugin Style)</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Decoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">FullModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">Decoder</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>4.5 Shape Checklist</h2>
+<p>Before <code>cat</code>/<code>stack</code>/<code>matmul</code>:</p>
+<ul>
+<li>Batch dim usually <code>0</code>.</li>
+<li>Linear: <code>(N, in_features)</code> → <code>(N, out_features)</code>.</li>
+<li>Conv2d: <code>(N, C, H, W)</code>; after conv, check <code>(N, C_out, H_out, W_out)</code>.</li>
+<li>Always print <code>tensor.shape</code> when debugging.</li>
+</ul>
+<hr />
+<h1>5. Training Loop &amp; Optimization</h1>
+<h2>5.1 Standard Supervised Loop (Classification)</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+        <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">batch_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">______</span><span class="p">()</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">______</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">______</span><span class="p">()</span>
+</code></pre></div>
+
+<p><strong>Answers:</strong> <code>zero_grad()</code>, <code>backward()</code>, <code>step()</code>.</p>
+<h2>5.2 Evaluation Mode</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="ow">in</span> <span class="n">val_loader</span><span class="p">:</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+        <span class="o">...</span>
+</code></pre></div>
+
+<h2>5.3 Gradient Flow Checklist</h2>
+<ul>
+<li><code>loss.backward()</code> before <code>optimizer.step()</code>.</li>
+<li><code>optimizer.zero_grad()</code> each step (or accumulate intentionally).</li>
+<li>Parameters that should train: <code>requires_grad=True</code> (default for <code>nn.Parameter</code>).</li>
+</ul>
+<hr />
+<h1>6. Common Bugs &amp; How to Fix Them</h1>
+<table>
+<thead>
+<tr>
+<th>Bug</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shape mismatch in <code>cat</code></td>
+<td>RuntimeError: size mismatch</td>
+<td>Align dims with <code>unsqueeze</code>/<code>expand</code>/<code>view</code>; check <code>dim</code>.</td>
+</tr>
+<tr>
+<td>Loss not decreasing</td>
+<td>Loss constant or NaN</td>
+<td>Check lr, <code>zero_grad</code>, labels dtype (long for CE), data scale.</td>
+</tr>
+<tr>
+<td>CUDA out of memory</td>
+<td>OOM</td>
+<td>Smaller batch_size, <code>torch.no_grad()</code> for val, clear cache.</td>
+</tr>
+<tr>
+<td>Single-element tensor as scalar</td>
+<td>TypeError in condition</td>
+<td>Use <code>item()</code>: <code>if loss.item() &lt; 0.5</code>.</td>
+</tr>
+<tr>
+<td>Wrong device</td>
+<td>Tensor not on same device</td>
+<td><code>.to(device)</code> for model, inputs, labels.</td>
+</tr>
+<tr>
+<td>Labels float for CrossEntropyLoss</td>
+<td>RuntimeError</td>
+<td>Convert to <code>torch.long</code>.</td>
+</tr>
+<tr>
+<td>Forgetting <code>model.train()</code>/<code>eval()</code></td>
+<td>Dropout/BatchNorm behave wrong</td>
+<td>Call <code>train()</code> in training, <code>eval()</code> in validation.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>7. Challenges &amp; Self-Assessment</h1>
+<h2>Challenge 1: Data Processing</h2>
+<p><strong>Task:</strong> Implement a function that takes <code>x</code> (N, C, H, W) and <code>cond</code> (N, D). Reshape <code>cond</code> to (N, D, 1, 1), expand to (N, D, H, W), concatenate with <code>x</code> along channels, return (N, C+D, H, W).</p>
+<p><strong>Your code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">concat_condition_to_feature_map</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cond</span><span class="p">):</span>
+    <span class="c1"># x: (N, C, H, W), cond: (N, D)</span>
+    <span class="c1"># TODO</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<h2>Challenge 2: Custom Dataset</h2>
+<p><strong>Task:</strong> Implement <code>TensorDataset</code> that takes two tensors <code>X</code> and <code>y</code>, and in <code>__getitem__</code> returns <code>(X[idx], y[idx])</code>.</p>
+<p><strong>Your code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">TensorDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="c1"># TODO</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<h2>Challenge 3: Conditional MLP</h2>
+<p><strong>Task:</strong> Build an MLP that takes input <code>x</code> (N, in_dim) and condition <code>c</code> (N, c_dim). First layer: <code>Linear(in_dim, h)</code>. Then concatenate hidden state with <code>c</code>, then <code>Linear(h + c_dim, num_classes)</code>.</p>
+<p><strong>Your code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">ConditionalMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="c1"># TODO</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<h2>Challenge 4: Find the Bug</h2>
+<p><strong>Code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">BuggyModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Training:</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()(</span><span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>  <span class="c1"># labels are float in [0, 1]</span>
+</code></pre></div>
+
+<p><strong>What’s wrong?</strong> (Answer in Answer Key.)</p>
+<h2>Challenge 5: Training Loop</h2>
+<p><strong>Task:</strong> Write a minimal training loop for 1 epoch: DataLoader, model, Adam, CrossEntropyLoss. Include <code>zero_grad</code>, <code>backward</code>, <code>step</code>, and moving tensors to device.</p>
+<hr />
+<h1>8. Answer Key</h1>
+<h2>8.1 Challenge 1: concat_condition_to_feature_map</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">concat_condition_to_feature_map</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cond</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">cond</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>8.2 Challenge 2: TensorDataset</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">TensorDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</code></pre></div>
+
+<h2>8.3 Challenge 3: ConditionalMLP</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span> <span class="nc">ConditionalMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">,</span> <span class="n">c_dim</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">c_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">h_c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">h</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">h_c</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>8.4 Challenge 4: Bug</h2>
+<ul>
+<li><strong>Bug:</strong> <code>CrossEntropyLoss</code> expects <strong>integer</strong> class indices (long), not float in [0, 1].</li>
+<li><strong>Fix:</strong> <code>labels = labels.long()</code> or use <code>torch.randint</code>/integer labels from the dataset.</li>
+</ul>
+<h2>8.5 Challenge 5: Training Loop (minimal)</h2>
+<div class="codehilite"><pre><span></span><code><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+    <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">batch_y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch_x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<hr />
+<h1>Code Challenges (Practice Folder)</h1>
+<p>All code lives in <strong><code>practice/week4_pytorch/</code></strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01_data_processing/</code></td>
+<td>Tensors, concat, condition_to_feature_map, Dataset, DataLoader</td>
+</tr>
+<tr>
+<td><code>02_models/</code></td>
+<td>ConcatBlock, ConditionalMLP, Encoder/Decoder/FullModel</td>
+</tr>
+<tr>
+<td><code>03_training/</code></td>
+<td>Training loop (zero_grad, forward, loss, backward, step)</td>
+</tr>
+<tr>
+<td><code>04_bug_finding/</code></td>
+<td>Find and fix: labels dtype, cat dim, device, etc.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Challenge files:</strong> <code>challenge_*.py</code> / <code>buggy_code_*.py</code> — fill in TODOs or fix bugs.</li>
+<li><strong>Solution files:</strong> <code>solution_*.py</code> — reference implementations.</li>
+</ul>
+<p>Run from <code>practice/</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>practice
+python<span class="w"> </span>week4_pytorch/01_data_processing/challenge_1_tensors.py<span class="w">   </span><span class="c1"># after filling TODOs</span>
+python<span class="w"> </span>week4_pytorch/04_bug_finding/buggy_code_1.py<span class="w">              </span><span class="c1"># will error until fixed</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Good luck with your Adobe interview.</strong></p></body></html>
