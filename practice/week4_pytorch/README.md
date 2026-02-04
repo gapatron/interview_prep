@@ -23,8 +23,9 @@ Structured PyTorch practice: **data → models → training → debugging → pi
 | **Advanced** | `11_transformers` | Scaled dot-product attention, multi-head, encoder block |
 | **Advanced** | `12_popular_architectures` | ResidualBlock, SimpleCNN, VGGBlock, make_layer, Bottleneck, SmallResNet, InceptionModule |
 | **Advanced** | `13_lora_adapters` | LoRALinear, BottleneckAdapter, AdapterBlock, inject_lora, build_lora_adapter_model (connect to base layers) |
+| **Interview** | `14_computation_exercises` | Conv 1D/2D/3D (output shape, params, FLOPs), Transformer/ViT shapes & params, complexity, tricky Q&A |
 
-Study guides: **PyTorch_Mastery_Guide** (core, **quizzes** on mixed precision, gradient accumulation, checkpointing, etc.) · **Advanced_Architectures_Guide** (diffusion, transformers, architectures) · **Popular_Architectures_Explained** (the “why” only, no code — use with `12_popular_architectures`) · **LoRA_and_Adapters_Guide** (LoRA, bottleneck adapters, injection, use with `13_lora_adapters`).
+Study guides: **PyTorch_Mastery_Guide** (core, **quizzes** on mixed precision, gradient accumulation, checkpointing, etc.) · **Advanced_Architectures_Guide** (diffusion, transformers, architectures) · **Popular_Architectures_Explained** (the “why” only, no code — use with `12_popular_architectures`) · **LoRA_and_Adapters_Guide** (LoRA, bottleneck adapters, injection, use with `13_lora_adapters`) · **Computation_Exercises_Guide** (conv/transformer/ViT dimensions, params, complexity — use with `14_computation_exercises`).
 
 ---
 

@@ -7,6 +7,7 @@
 - **PyTorch_Mastery_Guide.md** / **.html** — PyTorch: data, models, training, bugs (Adobe-style)
 - **Advanced_Architectures_Guide.md** / **.html** — Diffusion & flow matching, Transformers, popular architectures (overview)
 - **Popular_Architectures_Explained.md** — **The “why” only (no code):** residual connections, BN order, 3×3 stacks, shortcuts, VGG/ResNet/Bottleneck/Inception design and common bugs. Use with `12_popular_architectures/` challenges.
+- **Computation_Exercises_Guide.md** — **Parameters, dimensions, complexity:** Conv 1D/2D/3D (output shape, params, FLOPs), Transformer and ViT shapes & params, time/space complexity, interview gotchas. Use with `week4_pytorch/14_computation_exercises/`.
 
 ## 🖨️ Converting to PDF
 
